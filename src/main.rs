@@ -4,7 +4,7 @@ mod world;
 use crossterm::event::{self, Event};
 use std::thread;
 use std::time::Duration;
-use world::WorldStatus;
+use world::World;
 
 const DEFAULT_FRAME_RATE: u64 = 140;
 const DEFAULT_POB: f32 = 0.5;
@@ -17,33 +17,37 @@ fn main() -> std::io::Result<()> {
     ui::cursor_hidden();
 
     // Config World
-    let mut world = world::World::new(rows, cols);
+    let mut world = World::new(rows, cols);
     world.random_map(DEFAULT_POB);
 
-    // Start game
-    'game: loop {
+    // Start World
+    while !world.is_dead() {
         ui::clear_screen();
         ui.draw_map(&world.map);
         ui.draw_border();
         ui.draw_menu();
         ui.print();
-        world.next_iteration();
 
-        let status: WorldStatus = match detect_key_press() {
-            ui::Option::Quit => quit_game(),
-            ui::Option::New => new_game(&mut world),
-            ui::Option::PauseAndResume => pause_game(),
-            ui::Option::Any => WorldStatus::Alive,
-        };
-
-        if status == WorldStatus::Dead {
-            break 'game;
+        if !world.is_paused() {
+            world.next_iteration();
         }
+
+        handle_key_press(&mut world);
 
         thread::sleep(Duration::from_millis(DEFAULT_FRAME_RATE));
     }
 
+    ui::clear_screen();
     Ok(())
+}
+
+fn handle_key_press(world: &mut World) {
+    match detect_key_press() {
+        ui::Option::PauseAndResume => world.toggel_pause(),
+        ui::Option::New => world.random_map(DEFAULT_POB),
+        ui::Option::Quit => world.kill(),
+        ui::Option::Any => {}
+    };
 }
 
 fn detect_key_press() -> ui::Option {
@@ -53,28 +57,4 @@ fn detect_key_press() -> ui::Option {
         }
     }
     ui::Option::Any
-}
-
-fn quit_game() -> WorldStatus {
-    ui::clear_screen();
-    WorldStatus::Dead
-}
-
-fn new_game(world: &mut world::World) -> WorldStatus {
-    world.random_map(DEFAULT_POB);
-    WorldStatus::Alive
-}
-
-fn pause_game() -> WorldStatus {
-    'pause: loop {
-        match detect_key_press() {
-            ui::Option::PauseAndResume => break 'pause,
-            ui::Option::Quit => {
-                quit_game();
-                return WorldStatus::Dead;
-            }
-            _ => {}
-        }
-    }
-    WorldStatus::Alive
 }

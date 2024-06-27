@@ -4,13 +4,15 @@ use crate::ui::{PADDING_H, PADDING_W};
 pub type WorldMap = Vec<Vec<Cell>>;
 
 #[derive(PartialEq)]
-pub enum WorldStatus {
+enum Status {
     Alive,
+    Paused,
     Dead,
 }
 
 pub struct World {
     pub map: WorldMap,
+    status: Status,
     rows: u16,
     cols: u16,
 }
@@ -27,7 +29,28 @@ impl World {
             map: vec![vec![Cell::Dead; cols as usize]; rows as usize],
             rows,
             cols,
+            status: Status::Alive,
         }
+    }
+
+    pub fn is_dead(&self) -> bool {
+        self.status == Status::Dead
+    }
+
+    pub fn is_paused(&self) -> bool {
+        self.status == Status::Paused
+    }
+
+    pub fn kill(&mut self) {
+        self.status = Status::Dead;
+    }
+
+    pub fn toggel_pause(&mut self) {
+        self.status = match self.status {
+            Status::Paused => Status::Alive,
+            Status::Alive => Status::Paused,
+            Status::Dead => Status::Dead,
+        };
     }
 
     pub fn random_map(&mut self, poblation: f32) {
@@ -41,7 +64,6 @@ impl World {
 
     pub fn next_iteration(&mut self) {
         let mut new_map = self.map.clone();
-
         for (i, row) in self.map.iter().enumerate() {
             for (j, cell) in row.iter().enumerate() {
                 let alive_neighbors = self.get_neighbors_count(i as i32, j as i32);
@@ -57,7 +79,6 @@ impl World {
                 }
             }
         }
-
         self.map = new_map;
     }
 

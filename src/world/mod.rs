@@ -1,3 +1,3 @@
 mod cell;
 mod world;
-pub use world::{World, WorldMap, WorldStatus};
+pub use world::{World, WorldMap};
