@@ -4,6 +4,7 @@ mod world;
 use crossterm::event::{self, Event};
 use std::thread;
 use std::time::Duration;
+use world::WorldStatus;
 
 const DEFAULT_FRAME_RATE: u64 = 140;
 const DEFAULT_POB: f32 = 0.5;
@@ -14,7 +15,7 @@ fn main() -> std::io::Result<()> {
     // Config UI
     let ui = ui::UserInterface::new(rows, cols);
     ui::cursor_hidden();
-    
+
     // Config World
     let mut world = world::World::new(rows, cols);
     world.random_map(DEFAULT_POB);
@@ -28,21 +29,15 @@ fn main() -> std::io::Result<()> {
         ui.print();
         world.next_iteration();
 
-        match detect_key_press() {
-            ui::Option::PauseAndResume => 'pause: loop {
-                match detect_key_press() {
-                    ui::Option::PauseAndResume => break 'pause,
-                    ui::Option::Quit => break 'game,
-                    _ => {}
-                }
-            },
-            ui::Option::Quit => {
-                break 'game;
-            }
-            ui::Option::New => {
-                world.random_map(DEFAULT_POB);
-            }
-            ui::Option::Any => {}
+        let status: WorldStatus = match detect_key_press() {
+            ui::Option::Quit => quit_game(),
+            ui::Option::New => new_game(&mut world),
+            ui::Option::PauseAndResume => pause_game(),
+            ui::Option::Any => WorldStatus::Alive,
+        };
+
+        if status == WorldStatus::Dead {
+            break 'game;
         }
 
         thread::sleep(Duration::from_millis(DEFAULT_FRAME_RATE));
@@ -58,4 +53,28 @@ fn detect_key_press() -> ui::Option {
         }
     }
     ui::Option::Any
+}
+
+fn quit_game() -> WorldStatus {
+    ui::clear_screen();
+    WorldStatus::Dead
+}
+
+fn new_game(world: &mut world::World) -> WorldStatus {
+    world.random_map(DEFAULT_POB);
+    WorldStatus::Alive
+}
+
+fn pause_game() -> WorldStatus {
+    'pause: loop {
+        match detect_key_press() {
+            ui::Option::PauseAndResume => break 'pause,
+            ui::Option::Quit => {
+                quit_game();
+                return WorldStatus::Dead;
+            }
+            _ => {}
+        }
+    }
+    WorldStatus::Alive
 }

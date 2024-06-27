@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub enum Cell {
     Alive,
     Dead,

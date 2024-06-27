@@ -3,6 +3,12 @@ use crate::ui::{PADDING_H, PADDING_W};
 
 pub type WorldMap = Vec<Vec<Cell>>;
 
+#[derive(PartialEq)]
+pub enum WorldStatus {
+    Alive,
+    Dead,
+}
+
 pub struct World {
     pub map: WorldMap,
     rows: u16,
@@ -76,7 +82,7 @@ impl World {
         count
     }
 
-    pub fn is_cell_alive(&self, row: i32, col: i32) -> bool {
+    fn is_cell_alive(&self, row: i32, col: i32) -> bool {
         if row < 0 || row >= self.map.len() as i32 {
             return false;
         }
