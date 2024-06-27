@@ -13,13 +13,11 @@ fn main() -> std::io::Result<()> {
 
     // Config UI
     let ui = ui::UserInterface::new(rows, cols);
-
+    ui::cursor_hidden();
+    
     // Config World
     let mut world = world::World::new(rows, cols);
     world.random_map(DEFAULT_POB);
-
-    // Config UI
-    ui::cursor_hidden();
 
     // Start game
     'game: loop {
