@@ -16,6 +16,6 @@ I made this project as a way to learn rust. It's a simple implementation of Conw
 
 ## Release
 
-For use github relase page to download [download](https://github.com/ramiro-l/Game-Of-Life-Conway-Rust/releases) the binary.
+For use app of github relase page to [download](https://github.com/ramiro-l/Game-Of-Life-Conway-Rust/releases) the binary.
 
 > Note: In linux you need to give execution permission to the binary with `chmod +x game-of-life-conway`.
