@@ -1,6 +1,6 @@
 # Console Conway's game of life in RUST
 
-https://github.com/ramiro-l/Game-Of-Life-Conway-Rust/assets/74385260/54cabf52-8eb8-4df6-9913-64209c441e83
+https://github.com/ramiro-l/Game-Of-Life-Conway-Rust/assets/74385260/37512e3e-4212-4492-b786-5aa330f29f3a
 
 ## Description
 
