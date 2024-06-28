@@ -1,4 +1,4 @@
-use crossterm::event::{self, Event};
+use crossterm::event::{self, Event, KeyCode, KeyModifiers};
 use std::sync::mpsc::{self, Receiver};
 use std::thread;
 use std::time::Duration;
@@ -38,6 +38,14 @@ fn detect_interaction() -> Option<super::Option> {
                 }
             }
             Event::Key(key_event) => {
+                // Exit with 'Ctrl + c'
+                if key_event.modifiers.contains(KeyModifiers::CONTROL)
+                    && key_event.code == KeyCode::Char('c')
+                {
+                    return Some(super::Option::Quit);
+                }
+
+                // Other key events
                 return Some(super::Option::from_key(key_event.code));
             }
             _ => {}
