@@ -58,13 +58,21 @@ impl World {
             return;
         }
 
-        let row = row - 1;
-        let col = if col % 2 == 1 { col + 1 } else { col };
-        let col = col / 2 - PADDING_W;
+        // Adjust the position of the cursor
+        let (mut n_row, mut n_col) = (row, col);
+        n_row = if row > 0 { n_row - 1 } else { n_row };
+        n_col = if n_col % 2 == 1 { n_col + 1 } else { n_col };
+        n_col = n_col / 2;
+        n_col = if n_col > PADDING_W {
+            n_col - PADDING_W
+        } else {
+            n_col
+        };
 
-        let (row, col) = (row as usize, col as usize);
-        if row < self.map.len() && col < self.map[0].len() {
-            self.map[row][col] = match self.map[row][col] {
+        // Toggle the cell
+        let (n_row, n_col) = (n_row as usize, n_col as usize);
+        if n_row < self.map.len() && n_col < self.map[0].len() {
+            self.map[n_row][n_col] = match self.map[n_row][n_col] {
                 Cell::Alive => Cell::Dead,
                 Cell::Dead => Cell::Alive,
             };

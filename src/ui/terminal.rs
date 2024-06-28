@@ -1,6 +1,5 @@
 use crossterm::{
-    event::EnableMouseCapture,
-    execute,
+    event::{DisableMouseCapture, EnableMouseCapture},
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
@@ -8,13 +7,16 @@ use std::io::{stdout, Write};
 
 pub fn config_init() {
     stdout().execute(EnterAlternateScreen).unwrap();
+    stdout().execute(EnableMouseCapture).unwrap();
     enable_raw_mode().unwrap();
-    execute!(stdout(), EnableMouseCapture).unwrap();
+    cursor_hidden();
 }
 
 pub fn config_out() {
     stdout().execute(LeaveAlternateScreen).unwrap();
+    stdout().execute(DisableMouseCapture).unwrap();
     disable_raw_mode().unwrap();
+    cursor_show();
 }
 
 fn move_cursor(row: u16, col: u16) {
@@ -32,6 +34,11 @@ pub fn draw_on(row: u16, col: u16, c: &str) {
 
 pub fn cursor_hidden() {
     print!("\x1B[?25l");
+    print();
+}
+
+pub fn cursor_show() {
+    print!("\x1B[?25h");
     print();
 }
 

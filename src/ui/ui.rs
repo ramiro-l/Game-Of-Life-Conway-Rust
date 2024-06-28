@@ -17,6 +17,12 @@ pub struct UserInterface {
 impl UserInterface {
     pub fn new(rows: u16, cols: u16) -> UserInterface {
         let menu = Menu::new();
+        if cols <= menu.cols || rows <= menu.rows {
+            super::terminal::config_out();
+            println!("\nThe terminal is too small, please resize it.");
+            std::process::exit(0);
+        }
+
         UserInterface { rows, cols, menu }
     }
 
