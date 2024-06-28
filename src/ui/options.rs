@@ -2,8 +2,8 @@ use crossterm::event::KeyCode;
 
 pub enum Option {
     PauseAndResume,
+    NewRandomMap,
     Quit,
-    New,
     // Add more options here ...
     Any,
 }
@@ -11,9 +11,9 @@ pub enum Option {
 impl Option {
     pub fn from_key(key: KeyCode) -> Option {
         match key {
-            KeyCode::Enter => Option::PauseAndResume,
+            KeyCode::Char(' ') => Option::PauseAndResume,
+            KeyCode::Char('r') => Option::NewRandomMap,
             KeyCode::Char('q') => Option::Quit,
-            KeyCode::Char('n') => Option::New,
             // Add key mapping for new options here ...
             _ => Option::Any,
         }
@@ -21,9 +21,9 @@ impl Option {
 
     fn message(&self) -> &'static str {
         match self {
-            Option::PauseAndResume => "- 'enter' to pause/resume.",
+            Option::PauseAndResume => "- 'space' to pause/start.",
+            Option::NewRandomMap => "- 'r' random map.",
             Option::Quit => "- 'q' to quit.",
-            Option::New => "- 'n' init new map.",
             // Add messages for new options here ...
             Option::Any => "",
         }
@@ -32,8 +32,8 @@ impl Option {
     pub fn all_messages() -> Vec<&'static str> {
         vec![
             Option::PauseAndResume.message(),
+            Option::NewRandomMap.message(),
             Option::Quit.message(),
-            Option::New.message(),
             // Add messages for new options here ...
         ]
     }

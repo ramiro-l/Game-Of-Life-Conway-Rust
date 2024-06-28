@@ -44,7 +44,7 @@ fn main() -> std::io::Result<()> {
 fn handle_key_press(world: &mut World) {
     match detect_key_press() {
         ui::Option::PauseAndResume => world.toggel_pause(),
-        ui::Option::New => world.random_map(DEFAULT_POB),
+        ui::Option::NewRandomMap => world.random_map(DEFAULT_POB),
         ui::Option::Quit => world.kill(),
         ui::Option::Any => {}
     };
