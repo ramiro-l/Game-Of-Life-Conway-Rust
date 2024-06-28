@@ -45,12 +45,30 @@ impl World {
         self.status = Status::Dead;
     }
 
-    pub fn toggel_pause(&mut self) {
+    pub fn toggle_pause(&mut self) {
         self.status = match self.status {
             Status::Paused => Status::Alive,
             Status::Alive => Status::Paused,
             Status::Dead => Status::Dead,
         };
+    }
+
+    pub fn toggle_cell(&mut self, row: u16, col: u16) {
+        if !self.is_paused() {
+            return;
+        }
+
+        let row = row - 1;
+        let col = if col % 2 == 1 { col + 1 } else { col };
+        let col = col / 2 - PADDING_W;
+
+        let (row, col) = (row as usize, col as usize);
+        if row < self.map.len() && col < self.map[0].len() {
+            self.map[row][col] = match self.map[row][col] {
+                Cell::Alive => Cell::Dead,
+                Cell::Dead => Cell::Alive,
+            };
+        }
     }
 
     pub fn random_map(&mut self, poblation: f32) {
@@ -113,5 +131,9 @@ impl World {
         }
 
         self.map[row as usize][col as usize].is_alive()
+    }
+
+    pub fn clear(&mut self) {
+        self.map = vec![vec![Cell::Dead; self.cols as usize]; self.rows as usize];
     }
 }

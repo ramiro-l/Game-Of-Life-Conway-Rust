@@ -1,10 +1,11 @@
+mod interaction;
 mod menu;
 mod options;
-mod terminal;
+pub mod terminal;
 mod ui;
 
+pub use interaction::Interaction;
 pub use options::Option;
-pub use terminal::{clear_screen, cursor_hidden, terminal_size};
 pub use ui::UserInterface;
 
 // Constants for UI

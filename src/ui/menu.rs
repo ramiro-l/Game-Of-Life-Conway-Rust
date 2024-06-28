@@ -1,5 +1,4 @@
 const TITLE: &str = "\x1B[1mConway Game of Life\x1B[0m";
-const DESCRPTION: &str = "Press 'KEY + Enter':";
 const PADDING_T: u16 = 4;
 const PADDING_L: u16 = 2;
 
@@ -11,7 +10,7 @@ pub struct Menu {
 
 impl Menu {
     pub fn new() -> Menu {
-        let mut texts = vec![TITLE, DESCRPTION];
+        let mut texts = vec![TITLE];
         texts.extend(super::Option::all_messages());
 
         let (rows, cols) = Menu::calculate_rows_and_cols(&texts);
