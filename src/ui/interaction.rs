@@ -10,14 +10,10 @@ pub struct Interaction {
 
 impl Interaction {
     pub fn new() -> Interaction {
-        // Config Interaction
         let (interaction_tx, interaction_rx) = mpsc::channel();
 
         thread::spawn(move || loop {
             if let Some(option) = detect_interaction() {
-                if option == MenuOption::Any {
-                    continue;
-                }
                 if interaction_tx.send(option).is_err() {
                     break;
                 }
@@ -29,28 +25,27 @@ impl Interaction {
 }
 
 fn detect_interaction() -> Option<MenuOption> {
-    if event::poll(Duration::from_millis(0)).unwrap() {
-        match event::read().unwrap() {
-            Event::Mouse(mouse_event) => {
-                if mouse_event.kind
-                    == crossterm::event::MouseEventKind::Down(crossterm::event::MouseButton::Left)
-                {
-                    return Some(MenuOption::from_mouse(mouse_event.column, mouse_event.row));
-                }
+    if event::poll(Duration::from_millis(0)).unwrap_or(false) {
+        match event::read().unwrap_or(Event::Resize(0, 0)) {
+            Event::Mouse(mouse_event) if is_left_mouse_button_down(&mouse_event) => {
+                return Some(MenuOption::from_mouse(mouse_event.column, mouse_event.row));
+            }
+            Event::Key(key_event) if is_ctrl_c_pressed(&key_event) => {
+                return Some(MenuOption::Quit);
             }
             Event::Key(key_event) => {
-                // Exit with 'Ctrl + c'
-                if key_event.modifiers.contains(KeyModifiers::CONTROL)
-                    && key_event.code == KeyCode::Char('c')
-                {
-                    return Some(MenuOption::Quit);
-                }
-
-                // Other key events
                 return Some(MenuOption::from_key(key_event.code));
             }
             _ => {}
         }
     }
     None
+}
+
+fn is_left_mouse_button_down(mouse_event: &crossterm::event::MouseEvent) -> bool {
+    mouse_event.kind == crossterm::event::MouseEventKind::Down(crossterm::event::MouseButton::Left)
+}
+
+fn is_ctrl_c_pressed(key_event: &crossterm::event::KeyEvent) -> bool {
+    key_event.modifiers.contains(KeyModifiers::CONTROL) && key_event.code == KeyCode::Char('c')
 }

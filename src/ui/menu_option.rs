@@ -1,13 +1,12 @@
 use crossterm::event::KeyCode;
 
-#[derive(PartialEq)]
 pub enum MenuOption {
     PauseAndResume,
-    NewRandomMap,
     Edit(u16, u16),
+    NewRandomMap,
+    Speed(SpeedMenuOption),
     Clear,
     Quit,
-    Speed(SpeedMenuOption),
     // Add more options here ...
     Any,
 }
@@ -22,11 +21,12 @@ impl MenuOption {
     pub fn from_key(key: KeyCode) -> MenuOption {
         match key {
             KeyCode::Char(' ') => MenuOption::PauseAndResume,
+            // Edit option is 'pause&click' so it is not mapped here.
             KeyCode::Char('r') => MenuOption::NewRandomMap,
-            KeyCode::Char('q') => MenuOption::Quit,
-            KeyCode::Char('c') => MenuOption::Clear,
             KeyCode::Char('+') => MenuOption::Speed(SpeedMenuOption::More),
             KeyCode::Char('-') => MenuOption::Speed(SpeedMenuOption::Less),
+            KeyCode::Char('c') => MenuOption::Clear,
+            KeyCode::Char('q') => MenuOption::Quit,
             // Add key mapping for new options here ...
             _ => MenuOption::Any,
         }

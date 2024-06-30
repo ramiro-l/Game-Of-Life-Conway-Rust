@@ -53,11 +53,11 @@ fn main() -> Result<()> {
 fn handle_interaction(world: &mut World, option: ui::MenuOption, frame_rate: &mut u64) {
     match option {
         ui::MenuOption::PauseAndResume => world.toggle_pause(),
-        ui::MenuOption::NewRandomMap => world.random_map(DEFAULT_RANDOM_POB),
-        ui::MenuOption::Quit => world.kill(),
         ui::MenuOption::Edit(row, col) => world.toggle_cell(row, col),
-        ui::MenuOption::Clear => world.clear(),
         ui::MenuOption::Speed(speed_option) => handle_speed(speed_option, frame_rate),
+        ui::MenuOption::NewRandomMap => world.random_map(DEFAULT_RANDOM_POB),
+        ui::MenuOption::Clear => world.clear(),
+        ui::MenuOption::Quit => world.kill(),
         ui::MenuOption::Any => {}
     };
 }
