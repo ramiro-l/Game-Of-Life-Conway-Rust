@@ -3,18 +3,18 @@ use crate::ui::{PADDING_H, PADDING_W};
 
 pub type WorldMap = Vec<Vec<Cell>>;
 
-#[derive(PartialEq)]
-enum Status {
-    Alive,
-    Paused,
-    Dead,
-}
-
 pub struct World {
     pub map: WorldMap,
     status: Status,
     rows: u16,
     cols: u16,
+}
+
+#[derive(PartialEq)]
+enum Status {
+    Alive,
+    Paused,
+    Dead,
 }
 
 impl World {
@@ -45,6 +45,10 @@ impl World {
         self.status = Status::Dead;
     }
 
+    pub fn clear(&mut self) {
+        self.map = vec![vec![Cell::Dead; self.cols as usize]; self.rows as usize];
+    }
+
     pub fn toggle_pause(&mut self) {
         self.status = match self.status {
             Status::Paused => Status::Alive,
@@ -58,16 +62,7 @@ impl World {
             return;
         }
 
-        // Adjust the position of the cursor
-        let (mut n_row, mut n_col) = (row, col);
-        n_row = if row > 0 { n_row - 1 } else { n_row };
-        n_col = if n_col % 2 == 1 { n_col + 1 } else { n_col };
-        n_col = n_col / 2;
-        n_col = if n_col > PADDING_W {
-            n_col - PADDING_W
-        } else {
-            n_col
-        };
+        let (n_row, n_col) = adjust_cursor_position(row, col);
 
         // Toggle the cell
         let (n_row, n_col) = (n_row as usize, n_col as usize);
@@ -140,8 +135,18 @@ impl World {
 
         self.map[row as usize][col as usize].is_alive()
     }
+}
 
-    pub fn clear(&mut self) {
-        self.map = vec![vec![Cell::Dead; self.cols as usize]; self.rows as usize];
-    }
+fn adjust_cursor_position(row: u16, col: u16) -> (u16, u16) {
+    // Adjust the position of the cursor
+    let (mut n_row, mut n_col) = (row, col);
+    n_row = if row > 0 { n_row - 1 } else { n_row };
+    n_col = if n_col % 2 == 1 { n_col + 1 } else { n_col };
+    n_col = n_col / 2;
+    n_col = if n_col > PADDING_W {
+        n_col - PADDING_W
+    } else {
+        n_col
+    };
+    (n_row, n_col)
 }

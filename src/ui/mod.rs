@@ -1,12 +1,11 @@
 mod interaction;
 mod menu;
-mod options;
+mod menu_option;
 pub mod terminal;
 mod ui;
 
 pub use interaction::Interaction;
-pub use options::Option;
-pub use options::SpeedOption;
+pub use menu_option::{MenuOption, SpeedMenuOption};
 pub use ui::UserInterface;
 
 // Constants for UI

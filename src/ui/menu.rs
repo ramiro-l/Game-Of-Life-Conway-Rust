@@ -11,7 +11,7 @@ pub struct Menu {
 impl Menu {
     pub fn new() -> Menu {
         let mut texts = vec![TITLE];
-        texts.extend(super::Option::all_messages());
+        texts.extend(super::MenuOption::all_messages());
 
         let (rows, cols) = Menu::calculate_rows_and_cols(&texts);
 

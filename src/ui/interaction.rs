@@ -1,10 +1,11 @@
+use super::MenuOption;
 use crossterm::event::{self, Event, KeyCode, KeyModifiers};
 use std::sync::mpsc::{self, Receiver};
 use std::thread;
 use std::time::Duration;
 
 pub struct Interaction {
-    pub rx: Receiver<super::Option>,
+    pub rx: Receiver<MenuOption>,
 }
 
 impl Interaction {
@@ -14,6 +15,9 @@ impl Interaction {
 
         thread::spawn(move || loop {
             if let Some(option) = detect_interaction() {
+                if option == MenuOption::Any {
+                    continue;
+                }
                 if interaction_tx.send(option).is_err() {
                     break;
                 }
@@ -24,17 +28,14 @@ impl Interaction {
     }
 }
 
-fn detect_interaction() -> Option<super::Option> {
+fn detect_interaction() -> Option<MenuOption> {
     if event::poll(Duration::from_millis(0)).unwrap() {
         match event::read().unwrap() {
             Event::Mouse(mouse_event) => {
                 if mouse_event.kind
                     == crossterm::event::MouseEventKind::Down(crossterm::event::MouseButton::Left)
                 {
-                    return Some(super::Option::from_mouse(
-                        mouse_event.column,
-                        mouse_event.row,
-                    ));
+                    return Some(MenuOption::from_mouse(mouse_event.column, mouse_event.row));
                 }
             }
             Event::Key(key_event) => {
@@ -42,11 +43,11 @@ fn detect_interaction() -> Option<super::Option> {
                 if key_event.modifiers.contains(KeyModifiers::CONTROL)
                     && key_event.code == KeyCode::Char('c')
                 {
-                    return Some(super::Option::Quit);
+                    return Some(MenuOption::Quit);
                 }
 
                 // Other key events
-                return Some(super::Option::from_key(key_event.code));
+                return Some(MenuOption::from_key(key_event.code));
             }
             _ => {}
         }

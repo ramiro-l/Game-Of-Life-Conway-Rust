@@ -2,11 +2,12 @@ use super::menu::Menu;
 use super::terminal;
 use super::{PADDING_H, PADDING_W};
 
-const CHAR_POINT: &str = "██";
+const POINT: &str = "██";
 const CHAR_LINE_W_B: &str = "▄";
 const CHAR_LINE_W_T: &str = "▀";
 const CHAR_LINE_H_R: &str = "▌";
 const CHAR_LINE_H_L: &str = "▐";
+const CHAR_LINE_H: &str = "█";
 
 pub struct UserInterface {
     rows: u16,
@@ -26,10 +27,6 @@ impl UserInterface {
         UserInterface { rows, cols, menu }
     }
 
-    fn draw_on(&self, row: u16, col: u16, c: &str) {
-        terminal::draw_on(row, col, c);
-    }
-
     pub fn draw_point(&self, row: u16, mut col: u16) {
         // Check if the point is inside the menu
         if row < self.menu.rows && col < self.menu.cols {
@@ -39,18 +36,18 @@ impl UserInterface {
         if col % 2 == 1 {
             col = col + 1;
         };
-        self.draw_on(row + PADDING_W, col + PADDING_H, CHAR_POINT);
+        terminal::draw_on(row + PADDING_W, col + PADDING_H, POINT);
     }
 
     pub fn draw_border(&self) {
         for i in 0..self.cols {
-            self.draw_on(0, i, CHAR_LINE_W_T);
-            self.draw_on(self.rows, i, CHAR_LINE_W_B);
+            terminal::draw_on(0, i, CHAR_LINE_W_T);
+            terminal::draw_on(self.rows, i, CHAR_LINE_W_B);
         }
 
         for i in 0..self.rows + 1 {
-            self.draw_on(i, 0, CHAR_LINE_H_L);
-            self.draw_on(i, self.cols, CHAR_LINE_H_R);
+            terminal::draw_on(i, 0, CHAR_LINE_H_L);
+            terminal::draw_on(i, self.cols, CHAR_LINE_H_R);
         }
     }
 
@@ -59,15 +56,17 @@ impl UserInterface {
         let x = 3;
         let y = 2;
 
+        // Draw texts
         for i in 0..self.menu.texts.len() {
-            self.draw_on(y + (i as u16), x, self.menu.texts[i as usize]);
+            terminal::draw_on(y + (i as u16), x, self.menu.texts[i as usize]);
         }
 
+        // Draw borders
         for i in 2..self.menu.cols {
-            self.draw_on(self.menu.rows, i, CHAR_LINE_W_B);
+            terminal::draw_on(self.menu.rows, i, CHAR_LINE_W_B);
         }
         for i in 1..self.menu.rows + 1 {
-            self.draw_on(i, self.menu.cols, "█");
+            terminal::draw_on(i, self.menu.cols, CHAR_LINE_H);
         }
     }
 

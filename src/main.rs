@@ -50,22 +50,22 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn handle_interaction(world: &mut World, option: ui::Option, frame_rate: &mut u64) {
+fn handle_interaction(world: &mut World, option: ui::MenuOption, frame_rate: &mut u64) {
     match option {
-        ui::Option::PauseAndResume => world.toggle_pause(),
-        ui::Option::NewRandomMap => world.random_map(DEFAULT_RANDOM_POB),
-        ui::Option::Quit => world.kill(),
-        ui::Option::Edit(row, col) => world.toggle_cell(row, col),
-        ui::Option::Clear => world.clear(),
-        ui::Option::Speed(speed_option) => handle_speed(speed_option, frame_rate),
-        ui::Option::Any => {}
+        ui::MenuOption::PauseAndResume => world.toggle_pause(),
+        ui::MenuOption::NewRandomMap => world.random_map(DEFAULT_RANDOM_POB),
+        ui::MenuOption::Quit => world.kill(),
+        ui::MenuOption::Edit(row, col) => world.toggle_cell(row, col),
+        ui::MenuOption::Clear => world.clear(),
+        ui::MenuOption::Speed(speed_option) => handle_speed(speed_option, frame_rate),
+        ui::MenuOption::Any => {}
     };
 }
 
-fn handle_speed(speed_option: ui::SpeedOption, frame_rate: &mut u64) {
+fn handle_speed(speed_option: ui::SpeedMenuOption, frame_rate: &mut u64) {
     match speed_option {
-        ui::SpeedOption::Less => *frame_rate += STEP_FRAME_RATE,
-        ui::SpeedOption::More => {
+        ui::SpeedMenuOption::Less => *frame_rate += STEP_FRAME_RATE,
+        ui::SpeedMenuOption::More => {
             if *frame_rate > STEP_FRAME_RATE {
                 *frame_rate -= STEP_FRAME_RATE;
             }
